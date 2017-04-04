@@ -29,6 +29,7 @@ obs.create("this.is.a.key")
   .subscribe(value => console.log(`The value is ${value}`));
 
 ```
+Please, check the [examples folder](examples) for more examples.
 
 Parameters:
 
