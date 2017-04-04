@@ -1,48 +1,40 @@
 Spring Cloud Config Client for NodeJS
 =====================================
 
-[![Build Status](https://travis-ci.org/victorherraiz/cloud-config-client.svg?branch=master)](https://travis-ci.org/victorherraiz/cloud-config-client)
+[![Build Status](https://travis-ci.org/falci/cloud-config-client.svg?branch=master)](https://travis-ci.org/falci/cloud-config-client)
 
 Requires: NodeJS 4+
 
 Feature requests are welcome.
 
+This proejct is based on [Víctor Herraiz Posada](https://github.com/victorherraiz)'s [cloud-config-client](https://github.com/victorherraiz/cloud-config-client) version 0.3.1.
+All original features are compatible, plus the `observe` method that retuns a observable factory for properties.
+
 
 Install
 -------
 
-    npm install cloud-config-client --save
+    npm install cloud-config-client-observable --save
 
 
 Usage
 -----
 
 ```js
-const client = require("cloud-config-client");
-client.load({
+const client = require("cloud-config-client-observable");
+const obs = client.observe({
     application: "invoices"
-}).then((config) => {
-    // Look for a key
-    const value1 = config.get("this.is.a.key");
-
-    // Using a prefix, this is equivalent to .get("this.is.another.key");
-    const value2 = config.get("this.is", "another.key");
 });
+obs.create("this.is.a.key")
+  .subscribe(value => console.log(`The value is ${value}`));
 
-```
-
-### `load` function
-
-```js
-const promise = client.load(options);
-// or
-client.load(options, function(error, cfg) { ... });
 ```
 
 Parameters:
 
 * options (object, mandatory):
     * `endpoint` (string, optional, default: `http://localhost:8888`): Config server URL
+    * `interval` (integer, optional, default: 30000): The interval for updating properties.
     * `application` (deprecated: use name): Load configuration for this app
     * `name` (string, mandatory): Load the configuration with this name
     * `profiles` (string array, optional, default: `["default"]`)
@@ -52,25 +44,9 @@ Parameters:
         * `pass` (string)
 * cb (function, optional): node style callback, if missing the method will return a promise.
 
-Returns a configuration object, use `get` method to query values and `forEach` to iterate over them.
-
-### `config` object
-
-Methods:
-
-* `get`: return a value from the loaded configuration or null
-* `forEach(cb, include)`: Allow you to iterate over every key/value in the config.
-    * cb (function): iteration calback
-    * include (boolean, default: false): if true, include repeated keys.
-
-
-```js
-config.forEach((key, value) => console.log(key + ":" + value));
-```
-
 
 References
 ----------
-
+* [Spring Cloud Config Client for NodeJS](https://github.com/victorherraiz/cloud-config-client): Original project.
 * [Spring Cloud Config](http://cloud.spring.io/spring-cloud-config/)
 

@@ -1,6 +1,6 @@
 {
-  "name": "cloud-config-client",
-  "version": "0.3.1",
+  "name": "cloud-config-client-observable",
+  "version": "1.0.0",
   "description": "Spring Cloud Config Client for NodeJS",
   "main": "index.js",
   "scripts": {
@@ -9,12 +9,19 @@
   "keywords": [
     "Spring Cloud Config",
     "configuration",
-    "client"
+    "client",
+    "Reactive", "Rx", "Observable"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/victorherraiz/cloud-config-client.git"
+    "url": "https://github.com/falci/cloud-config-client.git"
   },
   "author": "Víctor Herraiz Posada <victor.herraiz@gmail.com> (https://github.com/victorherraiz)",
-  "license": "MIT"
+  "contributors": [
+    "Fernnado Falci <falci@falci.me> (https://falci.me)"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "rx": "^4.1.0"
+  }
 }
