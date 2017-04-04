@@ -16,7 +16,8 @@ const DATA = {
         source:  {
             "key01": "value01",
             "key03": null,
-            "key04.key01": 42
+            "key04.key01": 42,
+            "plus.plus": 0
         }
     }, {
         name: "file:///application.yml",
@@ -33,6 +34,9 @@ let lastHeaders = null;
 const server = http.createServer((req, res) => {
     lastURL = req.url;
     lastHeaders = req.headers;
+
+    DATA.propertySources[0].source['plus.plus']++;
+
     res.end(JSON.stringify(DATA));
 });
 
@@ -108,10 +112,10 @@ function forEachTest() {
     }).then((config) => {
         let counter = 0;
         config.forEach((key, value) => counter++);
-        assert.strictEqual(counter, 4);
+        assert.strictEqual(counter, 5);
         counter = 0;
         config.forEach((key, value) => counter++, true);
-        assert.strictEqual(counter, 5);
+        assert.strictEqual(counter, 6);
     });
 }
 
@@ -124,6 +128,34 @@ function contextPathTest() {
     });
 }
 
+function observe(chain) {
+  let firstValue = false,
+    value = false;
+
+    const obs = Client.observe({
+      endpoint: ENDPOINT,
+      profiles: ["test", "timeout"],
+      name: "application",
+      interval: 10
+    });
+
+    obs.create('plus.plus')
+    .subscribe(v => {
+      if(!firstValue) firstValue = v;
+
+      value = v;
+    });
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      assert(value > firstValue, 'should increment the value');
+
+      obs.close();
+      resolve(chain);
+    }, 25);
+  });
+}
+
 server.listen(PORT, () => {
     Promise.resolve()
     .then(basicTest)
@@ -133,6 +165,7 @@ server.listen(PORT, () => {
     .then(labelTest)
     .then(forEachTest)
     .then(contextPathTest)
+    .then(observe)
     .then(() => console.log("OK :D"))
     .catch((e) => {
         console.error(e);
