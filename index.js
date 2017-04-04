@@ -2,8 +2,9 @@
 
 const http = require("http");
 const URL = require("url");
-const ClientRequest = http.ClientRequest;
+const Rx = require("rx");
 const DEFAULT_URL = URL.parse("http://localhost:8888");
+const DEFAULT_INTERVAL = 30000;
 
 function build(data) {
     return {
@@ -98,4 +99,41 @@ function load(options, cb) {
         loadWithPromise(options);
 }
 
-module.exports = { load }
+function observe(options) {
+    const observables = {};
+    const interval = options.interval || DEFAULT_INTERVAL;
+    const repeat = setInterval(tick, interval);
+
+      function triggerObservables(config) {
+        for(let key in observables){
+          const currentValue = config.get(key);
+          if(currentValue !== observables[key].value) {
+            observables[key].value = currentValue;
+            observables[key].observable.onNext(currentValue);
+          }
+        }
+      }
+
+      function create(key) {
+        return Rx.Observable.create(observe => {
+          observables[key] = {
+            observable: observe
+          };
+        });
+      }
+
+      function tick() {
+        loadWithPromise(options)
+          .then(triggerObservables);
+      }
+
+      function close() {
+        return repeat && clearInterval(repeat);
+      }
+
+      tick();
+
+    return { create, close };
+}
+
+module.exports = { observe, load };
