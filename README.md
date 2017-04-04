@@ -1,7 +1,7 @@
 Spring Cloud Config Client for NodeJS
 =====================================
 
-[![Build Status](https://travis-ci.org/falci/cloud-config-client.svg?branch=master)](https://travis-ci.org/falci/cloud-config-client)
+[![Build Status](https://travis-ci.org/Falci/cloud-config-client.svg?branch=master)](https://travis-ci.org/Falci/cloud-config-client)
 
 Requires: NodeJS 4+
 
